@@ -49,7 +49,7 @@ function render() {
 
 var health = 100, score = 0
 
-World.init({ renderCallback: render, clearColor: 0x000022})
+World.init({ renderCallback: render, clearColor: "#620505"})
 var cam = World.getCamera()
 
 var tunnel = new Tunnel()
@@ -65,7 +65,7 @@ for(var i=0;i<NUM_ASTEROIDS; i++) {
   World.add(asteroids[i].getMesh())
 }
 
-World.getScene().fog = new THREE.FogExp2(0x0000022, 0.00125)
+World.getScene().fog = new THREE.FogExp2("#620505", 0.00110)
 
 World.start()
 
