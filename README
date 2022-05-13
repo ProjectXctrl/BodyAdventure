@@ -1,0 +1,6 @@
+to run the game:
+install npm
+npm run build
+npm run dev
+note it doesnt open a window so just ctrl c and close
+then right click on the index.html file and "open with live server"
