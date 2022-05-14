@@ -85,15 +85,20 @@ window.addEventListener('keyup', function(e) {
 
 //move downwards
 window.addEventListener('keydown', function(e) {
-  if(e.keyCode == 37) {
+  if(e.keyCode == 37 && cam.position.x>-60) {   //left
+
     cam.position.x -= 5
-  } else if(e.keyCode == 39) {
+  } 
+  else if(e.keyCode == 39&& cam.position.x<60 ) {   //right
     cam.position.x += 5
   }
 
-  if(e.keyCode == 38) {
+  if(e.keyCode == 38 && cam.position.y<70) {   //up
     cam.position.y += 5
-  } else if(e.keyCode == 40) {
+  } 
+  
+  else if(e.keyCode == 40 && cam.position.y>-35) {   //down
+    
     cam.position.y -= 5
   }
 })
