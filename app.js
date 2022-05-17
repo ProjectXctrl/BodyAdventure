@@ -68,11 +68,59 @@ var World = require('three-world'),
     Shot = require('./shot')
 
 var NUM_ASTEROIDS = 10
-
+var LEVEL = 1
 function render() {
-  cam.position.z -= 1
+  
+ 
   tunnel.update(cam.position.z)
   player.update()
+  document.getElementById("level").textContent=LEVEL;
+  
+  if(LEVEL==1){
+    cam.position.z -= 1.5
+    document.getElementById("target").textContent=200;
+
+  }
+if(LEVEL==2){
+    cam.position.z -= 2.5
+    document.getElementById("target").textContent=400;
+  }
+
+  if(LEVEL==3){
+    cam.position.z -= 4
+    document.getElementById("target").textContent=600;
+  }
+
+
+  
+  var timer = document.getElementById("time").innerHTML;
+  if(timer==="0m 0s" && score>=200 && LEVEL==1 ){ //if timer expires and score is at least 200 
+    
+    LEVEL+=1
+    document.getElementById("target").textContent==400;
+    alert("You Win Level 1! ")
+ 
+  } 
+  else if (timer==="0m 0s" && score<200 && LEVEL==1){ //if timer expires and score is less than 200
+    World.pause();
+    alert("You haven't destroyed enough viruses")
+    window.location.reload()
+
+  }
+  else if (score>=500&& LEVEL==2){
+    LEVEL+=1
+    alert("You Win Level 2!")
+
+  }
+
+  else if (score>=700 && LEVEL==3){
+    World.pause();
+    alert("Congrats, you win the game!")
+    window.location.reload()
+
+  }
+  
+  
 
   for(var i=0; i<shots.length; i++) {
     if(!shots[i].update(cam.position.z)) {
@@ -85,30 +133,34 @@ function render() {
     if(!asteroids[i].loaded) continue
 
     asteroids[i].update(cam.position.z)
-    if(player.loaded && player.bbox.isIntersectionBox(asteroids[i].bbox)) {
+    if(player.loaded && player.bbox.isIntersectionBox(asteroids[i].bbox)) {   //if spaceship hits a virus
       asteroids[i].reset(cam.position.z)
       health -= 20
       document.getElementById("health").textContent = health
       if(health < 1) {
+        LEVEL=1;
         World.pause()
         alert("Game over")
         window.location.reload()
       }
     }
+    
 
     for(var j=0; j<shots.length; j++) {
-      if(asteroids[i].bbox.isIntersectionBox(shots[j].bbox)) {
+      if(asteroids[i].bbox.isIntersectionBox(shots[j].bbox)) {  //if shot hits virus
+        var audio = new Audio('./song/alien3.wav');
         score += 10
         document.getElementById("score").textContent = score
         asteroids[i].reset(cam.position.z)
         World.getScene().remove(shots[j].getMesh())
         shots.splice(j, 1)
+        audio.play();
         break
       }
     }
+
   }
 }
-
 var health = 100, score = 0
 
 World.init({ renderCallback: render, clearColor: "#620505"})
@@ -131,7 +183,7 @@ World.getScene().fog = new THREE.FogExp2("#620505", 0.00110)
 
 World.start()
 
-//move upwards
+//key is pressed and let go
 window.addEventListener('keyup', function(e) {
   switch(e.keyCode) {
     case 32: // Space
@@ -145,20 +197,27 @@ window.addEventListener('keyup', function(e) {
   }
 })
 
-//move downwards
+//key is pressed
 window.addEventListener('keydown', function(e) {
-  if(e.keyCode == 37) {
+  if(e.key === "ArrowLeft"&& cam.position.x>-55) {   //left
+
     cam.position.x -= 5
-  } else if(e.keyCode == 39) {
-    cam.position.x += 5
+  } 
+  else if(e.key === "ArrowRight"&& cam.position.x<55 ) {   //right
+   
+    cam.position.x += 5 ;
   }
 
-  if(e.keyCode == 38) {
+  if(e.key === "ArrowUp" && cam.position.y<60) {   //up
     cam.position.y += 5
-  } else if(e.keyCode == 40) {
+  } 
+  
+  else if(e.key === "ArrowDown" && cam.position.y>-20) {   //down
+    
     cam.position.y -= 5
   }
 })
+
 
 },{"./asteroid":1,"./player":6,"./shot":7,"./tunnel":8,"three":10,"three-world":9}],3:[function(require,module,exports){
 /**
