@@ -7,6 +7,20 @@ var World = require('three-world'),
 
 var NUM_ASTEROIDS = 10
 
+var timer = document.getElementById("time").innerHTML;
+  if(timer==="EXPIRED" && score>=200 ){ //if timer expires and score is at least 200 
+    World.pause();
+    alert("You Win!")
+    window.location.reload()
+  } 
+  else if (timer==="EXPIRED" && score<200 ){ //if timer expires and score is less than 200
+    World.pause();
+    alert("You haven't destroyed enough viruses")
+    window.location.reload()
+
+  }
+
+
 function render() {
   cam.position.z -= 1
   tunnel.update(cam.position.z)
@@ -23,7 +37,7 @@ function render() {
     if(!asteroids[i].loaded) continue
 
     asteroids[i].update(cam.position.z)
-    if(player.loaded && player.bbox.isIntersectionBox(asteroids[i].bbox)) {
+    if(player.loaded && player.bbox.isIntersectionBox(asteroids[i].bbox)) {   //if spaceship hits a virus
       asteroids[i].reset(cam.position.z)
       health -= 20
       document.getElementById("health").textContent = health
@@ -35,7 +49,7 @@ function render() {
     }
 
     for(var j=0; j<shots.length; j++) {
-      if(asteroids[i].bbox.isIntersectionBox(shots[j].bbox)) {
+      if(asteroids[i].bbox.isIntersectionBox(shots[j].bbox)) {  //if shot hits virus
         score += 10
         document.getElementById("score").textContent = score
         asteroids[i].reset(cam.position.z)
@@ -69,7 +83,7 @@ World.getScene().fog = new THREE.FogExp2("#620505", 0.00110)
 
 World.start()
 
-//move upwards
+//key is pressed and let go
 window.addEventListener('keyup', function(e) {
   switch(e.keyCode) {
     case 32: // Space
@@ -83,17 +97,24 @@ window.addEventListener('keyup', function(e) {
   }
 })
 
-//move downwards
+//key is pressed
 window.addEventListener('keydown', function(e) {
-  if(e.keyCode == 37) {
+  if(e.key === "ArrowLeft"&& cam.position.x>-55) {   //left
+
     cam.position.x -= 5
-  } else if(e.keyCode == 39) {
-    cam.position.x += 5
+  } 
+  else if(e.key === "ArrowRight"&& cam.position.x<55 ) {   //right
+   
+    cam.position.x += 5 ;
   }
 
-  if(e.keyCode == 38) {
+  if(e.key === "ArrowUp" && cam.position.y<60) {   //up
     cam.position.y += 5
-  } else if(e.keyCode == 40) {
+  } 
+  
+  else if(e.key === "ArrowDown" && cam.position.y>-20) {   //down
+    
     cam.position.y -= 5
   }
 })
+
