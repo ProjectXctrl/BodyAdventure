@@ -4,7 +4,7 @@ var World = require('three-world'),
     Player = require('./player'),
     Asteroid = require('./asteroid'),
     Shot = require('./shot')
-    
+
 var NUM_ASTEROIDS = 10
 
 function render() {
@@ -12,18 +12,6 @@ function render() {
   tunnel.update(cam.position.z)
   player.update()
 
-  var timer = document.getElementById("time").innerHTML;
-  if(timer==="EXPIRED" && score>=200 ){ //if timer expires and score is at least 200 
-    World.pause();
-    alert("You Win!")
-    window.location.reload()
-  } 
-  else if (timer==="EXPIRED" && score<200 ){ //if timer expires and score is less than 200
-    World.pause();
-    alert("You haven't destroyed enough viruses")
-    window.location.reload()
-
-  }
   for(var i=0; i<shots.length; i++) {
     if(!shots[i].update(cam.position.z)) {
       World.getScene().remove(shots[i].getMesh())
@@ -35,11 +23,11 @@ function render() {
     if(!asteroids[i].loaded) continue
 
     asteroids[i].update(cam.position.z)
-    if(player.loaded && player.bbox.isIntersectionBox(asteroids[i].bbox)) { //if spaceship hits an astroid
+    if(player.loaded && player.bbox.isIntersectionBox(asteroids[i].bbox)) {
       asteroids[i].reset(cam.position.z)
       health -= 20
       document.getElementById("health").textContent = health
-      if(health < 1) {  //if health is depleted
+      if(health < 1) {
         World.pause()
         alert("Game over")
         window.location.reload()
@@ -47,7 +35,7 @@ function render() {
     }
 
     for(var j=0; j<shots.length; j++) {
-      if(asteroids[i].bbox.isIntersectionBox(shots[j].bbox)) {  //if shot hits astroid
+      if(asteroids[i].bbox.isIntersectionBox(shots[j].bbox)) {
         score += 10
         document.getElementById("score").textContent = score
         asteroids[i].reset(cam.position.z)
@@ -61,7 +49,7 @@ function render() {
 
 var health = 100, score = 0
 
-World.init({ renderCallback: render, clearColor: 0x000022})
+World.init({ renderCallback: render, clearColor: "#620505"})
 var cam = World.getCamera()
 
 var tunnel = new Tunnel()
@@ -77,12 +65,12 @@ for(var i=0;i<NUM_ASTEROIDS; i++) {
   World.add(asteroids[i].getMesh())
 }
 
-World.getScene().fog = new THREE.FogExp2(0x0000022, 0.00125)
+World.getScene().fog = new THREE.FogExp2("#620505", 0.00110)
 
 World.start()
 
-
-window.addEventListener('keyup', function(e) { //key is let go
+//move upwards
+window.addEventListener('keyup', function(e) {
   switch(e.keyCode) {
     case 32: // Space
       var shipPosition = cam.position.clone()
@@ -95,23 +83,17 @@ window.addEventListener('keyup', function(e) { //key is let go
   }
 })
 
-//key is pressed
+//move downwards
 window.addEventListener('keydown', function(e) {
-  if(e.key === "ArrowLeft"&& cam.position.x>-55) {   //left
-
+  if(e.keyCode == 37) {
     cam.position.x -= 5
-  } 
-  else if(e.key === "ArrowRight"&& cam.position.x<55 ) {   //right
-   
-    cam.position.x += 5 ;
+  } else if(e.keyCode == 39) {
+    cam.position.x += 5
   }
 
-  if(e.key === "ArrowUp" && cam.position.y<60) {   //up
+  if(e.keyCode == 38) {
     cam.position.y += 5
-  } 
-  
-  else if(e.key === "ArrowDown" && cam.position.y>-20) {   //down
-    
+  } else if(e.keyCode == 40) {
     cam.position.y -= 5
   }
 })
