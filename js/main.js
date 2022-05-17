@@ -7,34 +7,59 @@ var World = require('three-world'),
 
 var NUM_ASTEROIDS = 10
 var LEVEL = 1
-
 function render() {
   
  
   tunnel.update(cam.position.z)
   player.update()
-
+  document.getElementById("level").textContent=LEVEL;
+  
   if(LEVEL==1){
     cam.position.z -= 1.5
+    document.getElementById("target").textContent=200;
 
   }
-  else if(LEVEL==2){
+if(LEVEL==2){
     cam.position.z -= 2.5
+    document.getElementById("target").textContent=400;
   }
 
+  if(LEVEL==3){
+    cam.position.z -= 4
+    document.getElementById("target").textContent=600;
+  }
+
+
+  
   var timer = document.getElementById("time").innerHTML;
-  if(timer==="EXPIRED" && score>=200 && LEVEL==1 ){ //if timer expires and score is at least 200 
+  if(timer==="0m 0s" && score>=200 && LEVEL==1 ){ //if timer expires and score is at least 200 
+    
     LEVEL+=1
-    alert("You Win!")
+    document.getElementById("target").textContent==400;
+    alert("You Win Level 1! ")
  
   } 
-  else if (timer==="0m 0s" && score<200 ){ //if timer expires and score is less than 200
+  else if (timer==="0m 0s" && score<200 && LEVEL==1){ //if timer expires and score is less than 200
     World.pause();
     alert("You haven't destroyed enough viruses")
     window.location.reload()
 
   }
+  else if (score>=500&& LEVEL==2){
+    LEVEL+=1
+    alert("You Win Level 2!")
+
+  }
+
+  else if (score>=700 && LEVEL==3){
+    World.pause();
+    alert("Congrats, you win the game!")
+    window.location.reload()
+
+  }
   
+  
+
   for(var i=0; i<shots.length; i++) {
     if(!shots[i].update(cam.position.z)) {
       World.getScene().remove(shots[i].getMesh())
@@ -51,6 +76,7 @@ function render() {
       health -= 20
       document.getElementById("health").textContent = health
       if(health < 1) {
+        LEVEL=1;
         World.pause()
         alert("Game over")
         window.location.reload()
