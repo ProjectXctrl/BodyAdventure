@@ -7,7 +7,12 @@ var World = require('three-world'),
 
 var NUM_ASTEROIDS = 10
 
-var timer = document.getElementById("time").innerHTML;
+function render() {
+  cam.position.z -= 1
+  tunnel.update(cam.position.z)
+  player.update()
+    
+   var timer = document.getElementById("time").innerHTML;
   if(timer==="EXPIRED" && score>=200 ){ //if timer expires and score is at least 200 
     World.pause();
     alert("You Win!")
@@ -19,12 +24,6 @@ var timer = document.getElementById("time").innerHTML;
     window.location.reload()
 
   }
-
-
-function render() {
-  cam.position.z -= 1
-  tunnel.update(cam.position.z)
-  player.update()
 
   for(var i=0; i<shots.length; i++) {
     if(!shots[i].update(cam.position.z)) {
