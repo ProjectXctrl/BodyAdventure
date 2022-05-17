@@ -6,25 +6,35 @@ var World = require('three-world'),
     Shot = require('./shot')
 
 var NUM_ASTEROIDS = 10
+var LEVEL = 1
 
 function render() {
-  cam.position.z -= 1
+  
+ 
   tunnel.update(cam.position.z)
   player.update()
-    
-   var timer = document.getElementById("time").innerHTML;
-  if(timer==="EXPIRED" && score>=200 ){ //if timer expires and score is at least 200 
-    World.pause();
+
+  if(LEVEL==1){
+    cam.position.z -= 1.5
+
+  }
+  else if(LEVEL==2){
+    cam.position.z -= 2.5
+  }
+
+  var timer = document.getElementById("time").innerHTML;
+  if(timer==="EXPIRED" && score>=200 && LEVEL==1 ){ //if timer expires and score is at least 200 
+    LEVEL+=1
     alert("You Win!")
-    window.location.reload()
+ 
   } 
-  else if (timer==="EXPIRED" && score<200 ){ //if timer expires and score is less than 200
+  else if (timer==="0m 0s" && score<200 ){ //if timer expires and score is less than 200
     World.pause();
     alert("You haven't destroyed enough viruses")
     window.location.reload()
 
   }
-
+  
   for(var i=0; i<shots.length; i++) {
     if(!shots[i].update(cam.position.z)) {
       World.getScene().remove(shots[i].getMesh())
@@ -46,20 +56,23 @@ function render() {
         window.location.reload()
       }
     }
+    
 
     for(var j=0; j<shots.length; j++) {
       if(asteroids[i].bbox.isIntersectionBox(shots[j].bbox)) {  //if shot hits virus
+        var audio = new Audio('./song/alien3.wav');
         score += 10
         document.getElementById("score").textContent = score
         asteroids[i].reset(cam.position.z)
         World.getScene().remove(shots[j].getMesh())
         shots.splice(j, 1)
+        audio.play();
         break
       }
     }
+
   }
 }
-
 var health = 100, score = 0
 
 World.init({ renderCallback: render, clearColor: "#620505"})
