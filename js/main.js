@@ -2,13 +2,19 @@ var World = require('three-world'),
     THREE = require('three'),
     Tunnel = require('./tunnel'),
     Player = require('./player'),
-    Asteroid = require('./asteroid'),
+    Asteroid = require('./kidneyStones'),
     Shot = require('./shot')
 
-var NUM_ASTEROIDS = 10
-var LEVEL = 1
+var NUM_KIDSTONES = 13   //number of astroids generated at one time
+var LEVEL = 1  //level number
+
+//x,y & z positions of shots 
+var px=0   
+var py=25
+var pz=100;
+
+
 function render() {
-  
  
   tunnel.update(cam.position.z)
   player.update()
@@ -21,12 +27,12 @@ function render() {
   }
 if(LEVEL==2){
     cam.position.z -= 2.5
-    document.getElementById("target").textContent=400;
+    document.getElementById("target").textContent=500;
   }
 
   if(LEVEL==3){
     cam.position.z -= 4
-    document.getElementById("target").textContent=600;
+    document.getElementById("target").textContent=700;
   }
 
 
@@ -67,13 +73,14 @@ if(LEVEL==2){
     }
   }
 
-  for(var i=0; i<NUM_ASTEROIDS; i++) {
-    if(!asteroids[i].loaded) continue
+  for(var i=0; i<NUM_KIDSTONES; i++) {
+    if(!kidstones[i].loaded) continue
 
-    asteroids[i].update(cam.position.z)
-    if(player.loaded && player.bbox.isIntersectionBox(asteroids[i].bbox)) {   //if spaceship hits a virus
-      asteroids[i].reset(cam.position.z)
+    kidstones[i].update(cam.position.z)
+    if(player.loaded && player.bbox.isIntersectionBox(kidstones[i].bbox)) {   //if spaceship hits a virus
+      kidstones[i].reset(cam.position.z)
       health -= 20
+      
       document.getElementById("health").textContent = health
       if(health < 1) {
         LEVEL=1;
@@ -85,11 +92,11 @@ if(LEVEL==2){
     
 
     for(var j=0; j<shots.length; j++) {
-      if(asteroids[i].bbox.isIntersectionBox(shots[j].bbox)) {  //if shot hits virus
+      if(kidstones[i].bbox.isIntersectionBox(shots[j].bbox)) {  //if shot hits virus
         var audio = new Audio('./song/alien3.wav');
         score += 10
         document.getElementById("score").textContent = score
-        asteroids[i].reset(cam.position.z)
+        kidstones[i].reset(cam.position.z)
         World.getScene().remove(shots[j].getMesh())
         shots.splice(j, 1)
         audio.play();
@@ -99,38 +106,61 @@ if(LEVEL==2){
 
   }
 }
+
+
 var health = 100, score = 0
 
 World.init({ renderCallback: render, clearColor: "#620505"})
 var cam = World.getCamera()
 
+const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+World.add(directionalLight )
+
 var tunnel = new Tunnel()
 World.add(tunnel.getMesh())
+
 
 var player = new Player(cam)
 World.add(cam)
 
-var asteroids = [], shots = []
+var kidstones = [], shots = []
 
-for(var i=0;i<NUM_ASTEROIDS; i++) {
-  asteroids.push(new Asteroid(Math.floor(Math.random() * 5) + 1))
-  World.add(asteroids[i].getMesh())
+for(var i=0;i<NUM_KIDSTONES; i++) {
+  kidstones.push(new Asteroid(Math.floor(Math.random() * 5) + 1))
+  World.add(kidstones[i].getMesh())
 }
 
 World.getScene().fog = new THREE.FogExp2("#620505", 0.00110)
 
 World.start()
 
-//when key is pressed and let go, shoot
-window.addEventListener('keyup', function(e) {
+//key is pressed and let go
+window.addEventListener('keyup', function(e) { 
   switch(e.keyCode) {
-    case 32: // Space
+    case 32: // if the key is Space, shoot
+      var audio = new Audio('./song/hit.mp3');
+      audio.play();
       var shipPosition = cam.position.clone()
-      shipPosition.sub(new THREE.Vector3(0, 25, 100))
+      shipPosition.sub(new THREE.Vector3(px, py, pz))
       var shot = new Shot(shipPosition)
       shots.push(shot)
       World.add(shot.getMesh())
     break
+
+    case 81: // if the key is Q, switch to first person
+      px=0;
+      py=10;
+      pz=12;
+      player.firstPerson();
+    break
+
+    case 69: // if the key is E, switch to third person
+      px=0
+      py=25
+      pz=100;
+      player.thirdPerson();
+    break
+
   }
 })
 
