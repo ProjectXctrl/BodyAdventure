@@ -121,13 +121,12 @@ World.getScene().fog = new THREE.FogExp2("#620505", 0.00110)
 
 World.start()
 
-//key is pressed and let go
+//when key is pressed and let go, shoot
 window.addEventListener('keyup', function(e) {
   switch(e.keyCode) {
     case 32: // Space
       var shipPosition = cam.position.clone()
       shipPosition.sub(new THREE.Vector3(0, 25, 100))
-
       var shot = new Shot(shipPosition)
       shots.push(shot)
       World.add(shot.getMesh())
@@ -135,22 +134,34 @@ window.addEventListener('keyup', function(e) {
   }
 })
 
-//key is pressed
+
+document.addEventListener("mousedown", function(e) {  //when mouse is clicked, shoot
+  var audio = new Audio('./song/hit.mp3');
+      audio.play();
+      var shipPosition = cam.position.clone()
+      shipPosition.sub(new THREE.Vector3(0, 25, 100))
+      var shot = new Shot(shipPosition)
+      shots.push(shot)
+      World.add(shot.getMesh())
+
+});
+
+//when key is pressed
 window.addEventListener('keydown', function(e) {
-  if(e.key === "ArrowLeft"&& cam.position.x>-55) {   //left
+  if(e.key === "ArrowLeft"&& cam.position.x>-55) {   //move left
 
     cam.position.x -= 5
   } 
-  else if(e.key === "ArrowRight"&& cam.position.x<55 ) {   //right
+  else if(e.key === "ArrowRight"&& cam.position.x<55 ) {   //move right
    
     cam.position.x += 5 ;
   }
 
-  if(e.key === "ArrowUp" && cam.position.y<60) {   //up
+  if(e.key === "ArrowUp" && cam.position.y<60) {   //move up
     cam.position.y += 5
   } 
   
-  else if(e.key === "ArrowDown" && cam.position.y>-20) {   //down
+  else if(e.key === "ArrowDown" && cam.position.y>-20) {   //move down
     
     cam.position.y -= 5
   }
