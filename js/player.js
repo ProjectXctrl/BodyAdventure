@@ -7,8 +7,19 @@ var spaceship = null
 var Player = function(parent) {
   this.loaded = false
   var self = this, spaceship = null
-
   self.bbox = new THREE.Box3()
+    
+  this.remove = () =>{
+    parent.children.pop()
+  }
+  
+  this.firstPerson = () =>{
+    spaceship.position.set(0, -10,12)
+  }
+  
+  this.thirdPerson = () =>{
+    spaceship.position.set(0, -25, -100)
+  }
 
   if(spaceship === null) {
     loader.load('models/spaceship.obj', 'models/spaceship.mtl', function(mesh) {
