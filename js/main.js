@@ -138,7 +138,7 @@ var health = 100, score = 0
 World.init({ renderCallback: render, clearColor: "#620505"})
 var cam = World.getCamera()
 object=cam;
-//pitch.add(object);
+
 
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
 World.add(directionalLight )
