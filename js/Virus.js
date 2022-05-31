@@ -3,10 +3,10 @@ var THREE = require('three'),
 
 var loader = new ObjLoader()
 var rockMtl = new THREE.MeshLambertMaterial({
-  map: THREE.ImageUtils.loadTexture('models/lunarrock_s.png')
+  map: THREE.ImageUtils.loadTexture('models/covid.jpg')
 })
 
-var Asteroid = function(rockType) {
+var Virus = function(rockType) {
   var mesh = new THREE.Object3D(), self = this
 
   // Speed of motion and rotation
@@ -15,7 +15,7 @@ var Asteroid = function(rockType) {
 
   this.bbox = new THREE.Box3()
 
-  loader.load('models/rock' + rockType + '.obj', function(obj) {
+  loader.load('models/covid'  + '.obj', function(obj) {
     obj.traverse(function(child) {
       if(child instanceof THREE.Mesh) {
         child.material = rockMtl
@@ -56,4 +56,5 @@ var Asteroid = function(rockType) {
   return this
 }
 
-module.exports = Asteroid
+module.exports = Virus
+
