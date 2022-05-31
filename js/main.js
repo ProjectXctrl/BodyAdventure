@@ -18,7 +18,7 @@ var World = require('three-world'),
     var moveUp = false;
     var moveDown = false;
 
-var NUM_VIRUS = 8//number of virus generated at one time
+var NUM_VIRUS = 10//number of virus generated at one time
 var LEVEL = 1  //level number
 
 //x,y & z positions of shots 

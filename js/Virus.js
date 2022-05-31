@@ -3,7 +3,7 @@ var THREE = require('three'),
 
 var loader = new ObjLoader()
 var rockMtl = new THREE.MeshLambertMaterial({
-  map: THREE.ImageUtils.loadTexture('models/covid.jpg')
+  map: THREE.ImageUtils.loadTexture('models/covid.png')
 })
 
 var Virus = function(rockType) {

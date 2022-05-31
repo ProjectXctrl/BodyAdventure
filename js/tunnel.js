@@ -6,7 +6,7 @@ var Tunnel = function() {
   meshes.push(new THREE.Mesh(
     new THREE.CylinderGeometry(100, 100, 5000, 24, 24, true),
     new THREE.MeshBasicMaterial({
-      map: THREE.ImageUtils.loadTexture('images/bloodvessel.jpg', null, function(tex) {
+      map: THREE.ImageUtils.loadTexture('images/back4.jpg', null, function(tex) {
         tex.wrapS = tex.wrapT = THREE.RepeatWrapping
         tex.repeat.set(5, 10)
         tex.needsUpdate = true
