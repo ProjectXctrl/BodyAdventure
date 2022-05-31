@@ -125,7 +125,7 @@ if(LEVEL==2){
     
     LEVEL+=1
     document.getElementById("target").textContent==400;
-    alert("You Win Level 1! ")
+   alert("You Win Level 1! ")
  
   } 
   else if (timer==="0m 0s" && score<200 && LEVEL==1){ //if timer expires and score is less than 200
@@ -168,8 +168,10 @@ if(LEVEL==2){
       if(health < 1) {
         LEVEL=1;
         World.pause()
-        alert("Game over")
-        window.location.reload()
+      //  alert("Game over")
+       // window.location.reload()
+       window.location.href = './gameOver.html'; //relative to domain
+     
       }
     }
     

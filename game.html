@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Body Adventure</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+  @import url(http://fonts.googleapis.com/css?family=Orbitron);
+
+  html, body {
+    padding: 0;
+    margin:  0;
+
+    height: 100%;
+    height: 100vh;
+
+    overflow: hidden;
+  }
+
+  #bar {
+    font-family: Orbitron, sans-serif;
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1.5em;
+    background: black;
+    color: white;
+    line-height: 1.5em;
+  }
+  </style>
+</head>
+<body>
+  <div id="bar">
+    Health: <span id="health">100</span>%
+    &nbsp;&nbsp;
+    Score: <span id="score">0</span>
+    &nbsp;&nbsp;
+    Target Score: <span id="target"></span> 
+    &nbsp;&nbsp;
+    Time: <span id="time">1m 0s</span> 
+    &nbsp;&nbsp;
+    Level: <span id="level"></span>  
+    
+  </div>
+  <script src="app.js"></script>
+  <script src="timer.js">   </script>
+</body>
+</html>
