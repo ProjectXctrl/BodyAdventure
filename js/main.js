@@ -151,6 +151,7 @@ function render() {
         virus[i].reset(cam.position.z)
         World.getScene().remove(shots[j].getMesh())
         shots.splice(j, 1)
+        audio.volume = 0.3
         audio.play();
         break
       }
@@ -160,10 +161,7 @@ function render() {
   lastTick=t;
 }
 
-
-
-
-
+////////////////////////////////////////////////////////////////////
 
 var health = 100, score = 0
 
@@ -200,7 +198,8 @@ window.addEventListener('keyup', function(e) {
         ammo--;
         if(ammo>0){
           var audio = new Audio('./song/hit.mp3');
-          audio.play();
+          audio.volume = 0.2
+          audio.play();1
           var shipPosition = cam.position.clone()
           shipPosition.sub(new THREE.Vector3(px, py, pz))
           var shot = new Shot(shipPosition)
@@ -243,6 +242,7 @@ document.addEventListener("mousedown", function(e) {  //when mouse is clicked, s
     ammo--;
     if(ammo>=0){
       var audio = new Audio('./song/hit.mp3');
+      audio.volume = 0.2
       audio.play();
       var shipPosition = cam.position.clone()
       shipPosition.sub(new THREE.Vector3(0, 25, 100))

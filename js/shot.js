@@ -1,17 +1,16 @@
 var THREE = require('three')
 
-var shotMtl = new THREE.MeshBasicMaterial({
-  color: 0xff0000,
-  transparent: true,
-  opacity: 0.5
+var shotMtl = new THREE.MeshLambertMaterial({
+  map: THREE.ImageUtils.loadTexture('models/capsule2.png')
 })
 
 var Shot = function(initialPos) {
   this.mesh = new THREE.Mesh(
-    new THREE.SphereGeometry(3, 16, 16),
+    new THREE.CylinderGeometry( 5, 5, 20, 32 ),
     shotMtl
   )
   this.mesh.position.copy(initialPos)
+  this.mesh.rotateX(Math.PI/2)
 
   this.bbox = new THREE.Box3()
 
