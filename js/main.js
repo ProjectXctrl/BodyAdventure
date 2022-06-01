@@ -18,13 +18,18 @@ var World = require('three-world'),
     var moveUp = false;
     var moveDown = false;
 
-var NUM_VIRUS = 10//number of virus generated at one time
+var NUM_VIRUS = 18//number of virus generated at one time
 var LEVEL = 1  //level number
 
 //x,y & z positions of shots 
 var px=0   
 var py=25
 var pz=100;
+var ammo;
+
+var lvl1flag =true;
+var lvl2flag =true;
+var lvl3flag =true;
 
 
 
@@ -39,26 +44,49 @@ function render() {
   tunnel.update(cam.position.z)
   player.update()
   document.getElementById("level").textContent=LEVEL;
-  
-  if(LEVEL==1){
-    cam.position.z -= 1.5
-    document.getElementById("target").textContent=200;
 
+  if(LEVEL==1){
+
+    if(lvl1flag){
+      score=0
+      ammo=40
+      lvl1flag=false;
+    }
+    cam.position.z -= 3
+    document.getElementById("target").textContent=300;
   }
-if(LEVEL==2){
-    cam.position.z -= 2.5
+
+  if(LEVEL==2){
+
+    if(lvl2flag){
+      score=0
+      ammo=55
+      lvl2flag=false;
+    }
+
+    cam.position.z -= 5
     document.getElementById("target").textContent=500;
   }
 
   if(LEVEL==3){
-    cam.position.z -= 4
+
+    if(lvl3flag){
+      score=0
+      ammo=70
+      lvl3flag=false
+    }
+ 
+    cam.position.z -= 6
     document.getElementById("target").textContent=700;
   }
+  if(ammo>0){document.getElementById("ammo").textContent=ammo;}
+  else{document.getElementById("ammo").textContent="No Ammo";}
+
 
 
   
   var timer = document.getElementById("time").innerHTML;
-  if(timer==="0m 0s" && score>=200 && LEVEL==1 ){ //if timer expires and score is at least 200 
+  if(timer==="0m 0s" && score>=300 && LEVEL==1 ){ //if timer expires and score is at least 200 
     
     LEVEL+=1
     document.getElementById("target").textContent==400;
@@ -99,7 +127,9 @@ if(LEVEL==2){
     virus[i].update(cam.position.z)
     if(player.loaded && player.bbox.isIntersectionBox(virus[i].bbox)) {   //if spaceship hits a virus
       virus[i].reset(cam.position.z)
-      health -= 20
+      var time = document.getElementById("time").textContent;
+      if(time !="1m 0s" && time !="0m 59s" && time !="0m 58s" && time !="0m 57s" ){
+      health -= 20}
       
       document.getElementById("health").textContent = health
       if(health < 1) {
@@ -167,13 +197,16 @@ World.start()
 window.addEventListener('keyup', function(e) { 
   switch(e.keyCode) {
       case 32: // if the key is Space, shoot
-        var audio = new Audio('./song/hit.mp3');
-        audio.play();
-        var shipPosition = cam.position.clone()
-        shipPosition.sub(new THREE.Vector3(px, py, pz))
-        var shot = new Shot(shipPosition)
-        shots.push(shot)
-        World.add(shot.getMesh())
+        ammo--;
+        if(ammo>0){
+          var audio = new Audio('./song/hit.mp3');
+          audio.play();
+          var shipPosition = cam.position.clone()
+          shipPosition.sub(new THREE.Vector3(px, py, pz))
+          var shot = new Shot(shipPosition)
+          shots.push(shot)
+          World.add(shot.getMesh())
+        }
       break
 
       case 37: /*left*/
@@ -207,13 +240,16 @@ window.addEventListener('keyup', function(e) {
 
 
 document.addEventListener("mousedown", function(e) {  //when mouse is clicked, shoot
-  var audio = new Audio('./song/hit.mp3');
+    ammo--;
+    if(ammo>=0){
+      var audio = new Audio('./song/hit.mp3');
       audio.play();
       var shipPosition = cam.position.clone()
       shipPosition.sub(new THREE.Vector3(0, 25, 100))
       var shot = new Shot(shipPosition)
       shots.push(shot)
       World.add(shot.getMesh())
+    }
 
 });
 
