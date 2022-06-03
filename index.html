@@ -1,42 +1,48 @@
 <html>
+
 <head>
     <title>Antivirus</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <style>
       @import url(http://fonts.googleapis.com/css?family=Orbitron);
-
 </style>
-<body>
 
+<script>
+    //playing music when screen has been rendered 
+    window.addEventListener("DOMContentLoaded", event => {
+    const audio = document.querySelector("audio");
+    audio.volume = 0.2;
+    audio.play();
+    });
+
+    let pause = document.get
+  </script>
+
+<body>
     <div class="header">
         <div id="overlay">
-
+            <!--adding looped video to background of start page-->
             <video autoplay loop class="back-video" muted plays-inline>
                 <source src="media/body_video.mp4" type="video/mp4">
             </video>
+            <!--adding music forstart page-->
             <audio autoplay loop>
                 <source src="song/song1.mp3" type="audio/ogg">
                 <source src="song/song1.mp3" type="audio/mpeg">
                 Your browser does not support the audio tag.
-              </audio>
+            </audio>
         </div>
 
-        <script>
-            window.addEventListener("DOMContentLoaded", event => {
-            const audio = document.querySelector("audio");
-            audio.volume = 0.2;
-            audio.play();
-        });
-          </script>
-
+       
 
         <div class="content">
             <h1>Antivirus</h1>
-                
+            <!--Buttons on home menu-->
             <a href="./game.html" class="btn">Start</a>
-
-
+            <a href="./game.html" class="btn">Help</a>
+            <a href="./game.html" class="btn">Credits</a>
         </div>
 
     </div>
