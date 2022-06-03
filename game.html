@@ -12,11 +12,18 @@
   </audio>
 
   <script>
+    window.addEventListener("load", function () {
+    const loader = document.querySelector(".loader");
+    loader.className += " hidden"; // class "loader hidden"
+  });
+
     window.addEventListener("DOMContentLoaded", event => {
     const audio = document.querySelector("audio");
     audio.volume = 0.2;
     audio.play();
-});
+     });
+
+
   </script>
 
   <style>
@@ -45,6 +52,10 @@
   </style>
 </head>
 <body>
+
+  <div class="loader">
+    <img src="./media/loading-loop.gif" alt="Loading..." />
+  </div>
   <div id="bar">
     Health: <span id="health">100</span>%
     &nbsp;&nbsp;

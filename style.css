@@ -76,9 +76,9 @@
     height: auto;
     z-index: -100;
 }
-/*
-Possible loader css styling
-.loader {
+
+ /*styling loading page*/
+ .loader {
     position: fixed;
     z-index: 1000;
     top: 0;
@@ -92,10 +92,11 @@ Possible loader css styling
 }
 
 .loader > img {
-    width: 100px;
+    width: 0.4 rem;
 }
 
 .loader.hidden {
+    display:none;
     animation: fadeOut 2s;
     animation-fill-mode: forwards;
 }
@@ -106,4 +107,3 @@ Possible loader css styling
         visibility: hidden;
     }
 }
-*/
