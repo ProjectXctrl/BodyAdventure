@@ -1612,7 +1612,7 @@ var Shot = function(initialPos) {
     shotMtl
   )
   this.mesh.position.copy(initialPos)
-  this.mesh.rotateX(Math.PI/2)
+  this.mesh.rotateX(-Math.PI/4)
 
   this.bbox = new THREE.Box3()
 
