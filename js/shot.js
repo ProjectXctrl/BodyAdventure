@@ -38,7 +38,7 @@ var Shot = function(initialPos) {
   }
 
   this.update = function(z) {
-    this.mesh.position.z -= 20
+    this.mesh.position.z -= 25
     this.bbox.setFromObject(this.mesh)
 
     if(Math.abs(this.mesh.position.z - z) > 1000) {
