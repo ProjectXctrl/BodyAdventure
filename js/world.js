@@ -52,6 +52,8 @@ var World = (function() {
 
     renderer = new THREE.WebGLRenderer(options.rendererOpts);
     renderer.setSize(width, height);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     if(options.clearColor) renderer.setClearColor(options.clearColor);
 
     var container = options.container || document.body;

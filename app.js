@@ -62,7 +62,7 @@ module.exports = Virus
 
 
 },{"./objloader":4,"three":10}],2:[function(require,module,exports){
-var World = require('three-world'),
+var World = require('./world'),
     THREE = require('three'),
     Tunnel = require('./tunnel'),
     Player = require('./player'),
@@ -233,15 +233,19 @@ object=cam;
 
 ///directionalLight
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
-directionalLight.castShadow = true;
+//directionalLight.castShadow = true;
 World.add(directionalLight )
 
 //point light
-/* const pointlight = new THREE.PointLight(0xffffff, 1, 100);
-pointlight.castShadow = true;
-pointlight.position.set(0, 25, 100);
-pointlight.position.set(0, 100, 100);
-World.add(pointlight) */
+const pointlight1 = new THREE.PointLight(0xffffff, 5, 5);
+pointlight1.castShadow = true;
+pointlight1.position.set(0, -25, -120); //front
+World.add(pointlight1)
+
+/* const pointlight2 = new THREE.PointLight(0xffffff, 5, 100);
+pointlight2.castShadow = true;
+pointlight2.position.set(0, -100, -50); //top
+World.add(pointlight2) */
 
 var tunnel = new Tunnel()
 World.add(tunnel.getMesh())
@@ -372,7 +376,7 @@ function update(delta) {
 }
 
 
-},{"./Virus":1,"./player":6,"./shot":7,"./tunnel":8,"three":10,"three-world":9}],3:[function(require,module,exports){
+},{"./Virus":1,"./player":6,"./shot":7,"./tunnel":8,"./world":9,"three":10}],3:[function(require,module,exports){
 /**
  * Loads a Wavefront .mtl file specifying materials
  *
@@ -1563,10 +1567,7 @@ var THREE = require('three'),
     loader = new ObjMtlLoader()
 
 var spaceship = null
-const pointlight = new THREE.PointLight(0xffffff, 2, 100);
-pointlight.castShadow = true;
-//pointlight.position.set(0, -25, -100);
-//World.add(pointlight);
+
 
 var Player = function(parent) {
   this.loaded = false
@@ -1584,6 +1585,21 @@ var Player = function(parent) {
   this.thirdPerson = () =>{
     spaceship.position.set(0, -25, -100)
   }
+  
+  this.setZPos=(zPos)=>{ //set z position of spaceship
+     spaceship.position.set(0, -25, zPos)
+  }
+
+  //get x,y & z position of spaceship
+  this.getXPos=()=>{
+    return spaceship.position.x
+  }
+  this.getYPos=()=>{
+    return spaceship.position.y
+  }
+  this.getZPos=()=>{
+    return spaceship.position.z;
+  }
 
   if(spaceship === null) {
     loader.load('models/spaceship.obj', 'models/spaceship.mtl', function(mesh) {
@@ -1596,7 +1612,7 @@ var Player = function(parent) {
       self.bbox.setFromObject(spaceship)
       spaceship.traverse(function(child) {
         if(child instanceof THREE.Mesh) {
-          child.castShadow = true
+          child.receiveShadow = true
         }
       })
     })
@@ -1768,6 +1784,8 @@ var World = (function() {
 
     renderer = new THREE.WebGLRenderer(options.rendererOpts);
     renderer.setSize(width, height);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     if(options.clearColor) renderer.setClearColor(options.clearColor);
 
     var container = options.container || document.body;
