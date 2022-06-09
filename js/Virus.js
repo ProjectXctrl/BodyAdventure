@@ -20,6 +20,7 @@ var Virus = function(rockType) {
       if(child instanceof THREE.Mesh) {
         child.material = rockMtl
         child.castShadow = true
+        child.receiveShadow = true
       }
     })
 
