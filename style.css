@@ -92,7 +92,7 @@
 }
 
 .loader > img {
-    width: 0.4 rem;
+    width: 15%;
 }
 
 .loader.hidden {
@@ -106,4 +106,93 @@
         opacity: 0;
         visibility: hidden;
     }
+}
+
+/*Styling for help page*/
+#help-body {
+    width: 90%;
+    margin: 0 auto;
+    color: white;
+}
+
+#help-content {
+    overflow: auto;
+}
+
+#feature {
+    margin: 1%
+}
+
+.display,
+.controls,
+.objective {
+    width: 31.3%;
+    float: left;
+    margin: 1%;
+}
+
+.objective {
+    margin-right: 0%;
+}
+
+#main-video {
+    height: 10em;
+    margin-bottom: 1em;
+    background-color: #333;
+    text-align: center;
+}
+
+.explanation-card {
+    height: 22em;
+    margin-bottom: 1em;
+    background-color: #333;
+    text-align: center;
+}
+
+#help-header {
+    text-align: center;
+    margin-bottom: 1em;
+    margin-top: 1em;
+
+}
+
+
+#help-video {
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.explanation-card h1 {
+    font-size: medium;
+}
+
+.explanation-card img {
+    width: 90%;
+    max-height: 30%;
+}
+
+.explanation-card p,
+.explanation-card ul {
+    font-size: 0.75em;
+    font-weight: 50;
+    padding-left: 3em;
+    text-align: left;
+
+}
+
+.explanation-card ul {
+    list-style: none;
+    text-align: left;
+    margin-top: 3.5em;
+}
+
+
+.controls a {
+    display: block;
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 4px;
+
 }
