@@ -1,4 +1,4 @@
-var World = require('three-world'),
+var World = require('./world'),
     THREE = require('three'),
     Tunnel = require('./tunnel'),
     Player = require('./player'),
@@ -169,15 +169,19 @@ object=cam;
 
 ///directionalLight
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
-directionalLight.castShadow = true;
+//directionalLight.castShadow = true;
 World.add(directionalLight )
 
 //point light
-/* const pointlight = new THREE.PointLight(0xffffff, 1, 100);
-pointlight.castShadow = true;
-pointlight.position.set(0, 25, 100);
-pointlight.position.set(0, 100, 100);
-World.add(pointlight) */
+const pointlight1 = new THREE.PointLight(0xffffff, 5, 5);
+pointlight1.castShadow = true;
+pointlight1.position.set(0, -25, -120); //front
+World.add(pointlight1)
+
+/* const pointlight2 = new THREE.PointLight(0xffffff, 5, 100);
+pointlight2.castShadow = true;
+pointlight2.position.set(0, -100, -50); //top
+World.add(pointlight2) */
 
 var tunnel = new Tunnel()
 World.add(tunnel.getMesh())
