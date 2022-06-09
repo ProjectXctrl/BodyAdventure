@@ -24,6 +24,21 @@ var Player = function(parent) {
   this.thirdPerson = () =>{
     spaceship.position.set(0, -25, -100)
   }
+  
+  this.setZPos=(zPos)=>{ //set z position of spaceship
+     spaceship.position.set(0, -25, zPos)
+  }
+
+  //get x,y & z position of spaceship
+  this.getXPos=()=>{
+    return spaceship.position.x
+  }
+  this.getYPos=()=>{
+    return spaceship.position.y
+  }
+  this.getZPos=()=>{
+    return spaceship.position.z;
+  }
 
   if(spaceship === null) {
     loader.load('models/spaceship.obj', 'models/spaceship.mtl', function(mesh) {
