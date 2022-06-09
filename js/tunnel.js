@@ -5,11 +5,13 @@ var Tunnel = function() {
 
   meshes.push(new THREE.Mesh(
     new THREE.CylinderGeometry(100, 100, 5000, 24, 24, true),
+    
     new THREE.MeshBasicMaterial({
-      map: THREE.ImageUtils.loadTexture('images/back4.jpg', null, function(tex) {
+      color:"white",
+       map: THREE.ImageUtils.loadTexture('images/back4.jpg', null, function(tex) {
         tex.wrapS = tex.wrapT = THREE.RepeatWrapping
         tex.repeat.set(5, 10)
-        tex.needsUpdate = true
+        tex.needsUpdate = true 
       }),
       side: THREE.BackSide
     })
@@ -18,11 +20,13 @@ var Tunnel = function() {
   // Adding the second mesh as a clone of the first mesh
   meshes.push(meshes[0].clone())
   meshes[1].position.z = -5000
-
+  meshes[0].receiveShadow=true;
+  meshes[1].receiveShadow=true;
   tunnel.add(meshes[0])
   tunnel.add(meshes[1])
 
   this.getMesh = function() {
+   // tunnel.receiveShadow=true;
     return tunnel
   }
 
