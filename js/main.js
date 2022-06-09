@@ -32,10 +32,8 @@ var lvl2flag =true;
 var lvl3flag =true;
 
 
-
-
+/////////////////////////////
 function render() {
-  //console.log("hu");
 
   var t = performance.now();
   var delta = t - lastTick;
@@ -169,9 +167,17 @@ World.init({ renderCallback: render, clearColor: "#620505"})
 var cam = World.getCamera()
 object=cam;
 
-
+///directionalLight
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+directionalLight.castShadow = true;
 World.add(directionalLight )
+
+//point light
+/* const pointlight = new THREE.PointLight(0xffffff, 1, 100);
+pointlight.castShadow = true;
+pointlight.position.set(0, 25, 100);
+pointlight.position.set(0, 100, 100);
+World.add(pointlight) */
 
 var tunnel = new Tunnel()
 World.add(tunnel.getMesh())
@@ -199,7 +205,7 @@ window.addEventListener('keyup', function(e) {
         if(ammo>0){
           var audio = new Audio('./song/hit.mp3');
           audio.volume = 0.2
-          audio.play();1
+          audio.play();
           var shipPosition = cam.position.clone()
           shipPosition.sub(new THREE.Vector3(px, py, pz))
           var shot = new Shot(shipPosition)
@@ -277,8 +283,6 @@ window.addEventListener('keydown', function(e) {
 function update(delta) {
  
 
-
- 
     if ((moveLeft || moveRight)  ) {
    
       const x_contrib =  (Number(moveLeft) - Number(moveRight)) ;

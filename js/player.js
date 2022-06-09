@@ -1,8 +1,12 @@
-var THREE = require('three')
+var THREE = require('three'),
     ObjMtlLoader = require('./objmtlloader'),
     loader = new ObjMtlLoader()
 
 var spaceship = null
+const pointlight = new THREE.PointLight(0xffffff, 2, 100);
+pointlight.castShadow = true;
+//pointlight.position.set(0, -25, -100);
+//World.add(pointlight);
 
 var Player = function(parent) {
   this.loaded = false
@@ -30,6 +34,11 @@ var Player = function(parent) {
       parent.add(spaceship)
       self.loaded = true
       self.bbox.setFromObject(spaceship)
+      spaceship.traverse(function(child) {
+        if(child instanceof THREE.Mesh) {
+          child.castShadow = true
+        }
+      })
     })
   } else {
     parent.add(spaceship)

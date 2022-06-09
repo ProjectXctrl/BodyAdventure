@@ -20,6 +20,7 @@ var Virus = function(rockType) {
     obj.traverse(function(child) {
       if(child instanceof THREE.Mesh) {
         child.material = rockMtl
+        child.castShadow = true
       }
     })
 
@@ -95,10 +96,8 @@ var lvl2flag =true;
 var lvl3flag =true;
 
 
-
-
+/////////////////////////////
 function render() {
-  //console.log("hu");
 
   var t = performance.now();
   var delta = t - lastTick;
@@ -232,9 +231,17 @@ World.init({ renderCallback: render, clearColor: "#620505"})
 var cam = World.getCamera()
 object=cam;
 
-
+///directionalLight
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+directionalLight.castShadow = true;
 World.add(directionalLight )
+
+//point light
+/* const pointlight = new THREE.PointLight(0xffffff, 1, 100);
+pointlight.castShadow = true;
+pointlight.position.set(0, 25, 100);
+pointlight.position.set(0, 100, 100);
+World.add(pointlight) */
 
 var tunnel = new Tunnel()
 World.add(tunnel.getMesh())
@@ -262,7 +269,7 @@ window.addEventListener('keyup', function(e) {
         if(ammo>0){
           var audio = new Audio('./song/hit.mp3');
           audio.volume = 0.2
-          audio.play();1
+          audio.play();
           var shipPosition = cam.position.clone()
           shipPosition.sub(new THREE.Vector3(px, py, pz))
           var shot = new Shot(shipPosition)
@@ -340,8 +347,6 @@ window.addEventListener('keydown', function(e) {
 function update(delta) {
  
 
-
- 
     if ((moveLeft || moveRight)  ) {
    
       const x_contrib =  (Number(moveLeft) - Number(moveRight)) ;
@@ -1553,11 +1558,15 @@ OBJMTLLoader.prototype = {
 THREE.EventDispatcher.prototype.apply( OBJMTLLoader.prototype );
 
 },{"./mtlloader":3,"three":10}],6:[function(require,module,exports){
-var THREE = require('three')
+var THREE = require('three'),
     ObjMtlLoader = require('./objmtlloader'),
     loader = new ObjMtlLoader()
 
 var spaceship = null
+const pointlight = new THREE.PointLight(0xffffff, 2, 100);
+pointlight.castShadow = true;
+//pointlight.position.set(0, -25, -100);
+//World.add(pointlight);
 
 var Player = function(parent) {
   this.loaded = false
@@ -1585,6 +1594,11 @@ var Player = function(parent) {
       parent.add(spaceship)
       self.loaded = true
       self.bbox.setFromObject(spaceship)
+      spaceship.traverse(function(child) {
+        if(child instanceof THREE.Mesh) {
+          child.castShadow = true
+        }
+      })
     })
   } else {
     parent.add(spaceship)
@@ -1602,17 +1616,36 @@ module.exports = Player
 },{"./objmtlloader":5,"three":10}],7:[function(require,module,exports){
 var THREE = require('three')
 
-var shotMtl = new THREE.MeshLambertMaterial({
-  map: THREE.ImageUtils.loadTexture('models/capsule2.png')
-})
+//build half a capsule
+function halfcylinder(color){
+  const geometry = new THREE.CylinderGeometry( 5, 5, 20, 32 );
+  const material = new THREE.MeshPhongMaterial({ color: color });
+  const halfcylinder = new THREE.Mesh(geometry, material);
+  return halfcylinder;
+}
+
+//build full capsule
+function createCapsule() {
+  const bullet = new THREE.Group();
+  
+  const capsule1 = halfcylinder("grey");
+  capsule1.position.y = 0;
+  capsule1.position.x = 0;
+  bullet.add(capsule1);
+  
+  const capsule2 = halfcylinder("blue");
+  capsule2.position.y = 20;  
+  capsule2.position.x = 0;
+  bullet.add(capsule2);
+
+  return bullet;
+}
 
 var Shot = function(initialPos) {
-  this.mesh = new THREE.Mesh(
-    new THREE.CylinderGeometry( 5, 5, 20, 32 ),
-    shotMtl
-  )
+  this.mesh = createCapsule()
   this.mesh.position.copy(initialPos)
-  this.mesh.rotateX(-Math.PI/4)
+  this.mesh.rotateX(Math.PI/2)
+  this.mesh.scale.set(1,0.5,1)
 
   this.bbox = new THREE.Box3()
 
@@ -1621,7 +1654,7 @@ var Shot = function(initialPos) {
   }
 
   this.update = function(z) {
-    this.mesh.position.z -= 15
+    this.mesh.position.z -= 20
     this.bbox.setFromObject(this.mesh)
 
     if(Math.abs(this.mesh.position.z - z) > 1000) {
