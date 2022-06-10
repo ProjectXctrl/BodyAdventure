@@ -3,10 +3,10 @@ var THREE = require('three')
 var Tunnel = function() {
   var tunnel = new THREE.Object3D(), meshes = []
 
-  meshes.push(new THREE.Mesh(
+  meshes.push(new THREE.Mesh(   //setting up cylinder
     new THREE.CylinderGeometry(100, 100, 5000, 24, 24, true),
     
-    new THREE.MeshBasicMaterial({
+    new THREE.MeshBasicMaterial({     //setting up the material and texture
       color:"white",
        map: THREE.ImageUtils.loadTexture('images/back4.jpg', null, function(tex) {
         tex.wrapS = tex.wrapT = THREE.RepeatWrapping
@@ -25,12 +25,11 @@ var Tunnel = function() {
   tunnel.add(meshes[0])
   tunnel.add(meshes[1])
 
-  this.getMesh = function() {
-   // tunnel.receiveShadow=true;
+  this.getMesh = function() {     //gets the finished tunnel
     return tunnel
   }
 
-  this.update = function(z) {
+  this.update = function(z) {    //alternating positions of each tunnel one in front of the other
     for(var i=0; i<2; i++) {
       if(z < meshes[i].position.z - 2500) {
         meshes[i].position.z -= 10000
