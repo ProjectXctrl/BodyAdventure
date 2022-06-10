@@ -7,7 +7,7 @@ var World = (function() {
 
   var paused = false;
 
-  function render() {
+  function render() {    // in oreder to render the scene
     if (paused) return;
     if(frameCallback) {
       if(frameCallback() === false) {
@@ -19,7 +19,7 @@ var World = (function() {
     requestAnimationFrame(render);
   }
 
-  function onResize() {
+  function onResize() {  //size of the window and camera aspect 
     var width  = container ? container.clientWidth  : window.innerWidth,
         height = container ? container.clientHeight : window.innerHeight;
 
@@ -30,7 +30,7 @@ var World = (function() {
 
   }
 
-  // Exports
+
 
   self.init = function(options) {
     if(!options) options = {};
@@ -49,7 +49,8 @@ var World = (function() {
 
     var ambient = new THREE.AmbientLight(options.ambientLightColor === undefined ? 0xffffff : options.ambientLightColor);
     scene.add(ambient);
-
+	  
+     //renderer properties
     renderer = new THREE.WebGLRenderer(options.rendererOpts);
     renderer.setSize(width, height);
     renderer.shadowMap.enabled = true;
@@ -62,16 +63,20 @@ var World = (function() {
     window.addEventListener( 'resize', onResize, false );
   }
 
-  self.add = function(object) {
+	
+// to add and remove objects from the world
+  self.add = function(object) {   
     scene.add(object);
   }
-
   self.remove = function(object) {
     scene.remove(object);
   }
 
   self.recalculateSize = onResize;
 
+	
+// functions used for the state of the world
+	
   self.start = function() {
     render();
   }
