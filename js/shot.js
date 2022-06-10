@@ -26,6 +26,7 @@ function createCapsule() {
 }
 
 var Shot = function(initialPos) {
+  //properties of the shots
   this.mesh = createCapsule()
   this.mesh.position.copy(initialPos)
   this.mesh.rotateX(Math.PI/2)
@@ -37,7 +38,7 @@ var Shot = function(initialPos) {
     return this.mesh
   }
 
-  this.update = function(z) {
+  this.update = function(z) {  //updates position of shot 
     this.mesh.position.z -= 25
     this.bbox.setFromObject(this.mesh)
 
