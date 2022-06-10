@@ -8,16 +8,12 @@ var spaceship = null
 var Player = function(parent) {
   this.loaded = false
   var self = this, spaceship = null
-  self.bbox = new THREE.Box3()
+  self.bbox = new THREE.Box3()   //collision detection box
     
-  this.remove = () =>{
-    parent.children.pop()
-  }
-  
+ //camera effects
   this.firstPerson = () =>{
     spaceship.position.set(0, -10,12)
   }
-  
   this.thirdPerson = () =>{
     spaceship.position.set(0, -25, -100)
   }
@@ -37,7 +33,7 @@ var Player = function(parent) {
     return spaceship.position.z;
   }
 
-  if(spaceship === null) {
+  if(spaceship === null) {   // to load our spaceship and establish its properties
     loader.load('models/spaceship.obj', 'models/spaceship.mtl', function(mesh) {
       mesh.scale.set(0.2, 0.2, 0.2)
       mesh.rotation.set(0, Math.PI, 0)
@@ -57,9 +53,9 @@ var Player = function(parent) {
     self.loaded = true
   }
 
-  this.update = function() {
+  this.update = function() { 
     if(!spaceship) return
-    this.bbox.setFromObject(spaceship)
+    this.bbox.setFromObject(spaceship)  //sets collision detection box size based of spaceship size
   }
 }
 
