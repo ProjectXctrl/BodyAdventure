@@ -59,12 +59,12 @@ function render() {
     if(lvl2flag){
       var time2 = new Timer(1,2);
       score=0
-      ammo=80
+      ammo=70
       lvl2flag=false;
     }
 
     cam.position.z -= 5.5
-    document.getElementById("target").textContent=600;
+    document.getElementById("target").textContent=500;
   }
 
   if(LEVEL==3){
@@ -72,12 +72,12 @@ function render() {
     if(lvl3flag){
       var time2 = new Timer(1,2);
       score=0
-      ammo=95
+      ammo=90
       lvl3flag=false
     }
  
     cam.position.z -= 6.5
-    document.getElementById("target").textContent=700;
+    document.getElementById("target").textContent=600;
   }
 
 
@@ -95,19 +95,19 @@ function render() {
  
   } 
 
-  else if (timer==="0m 0s"&& score>=600&& LEVEL==2){   //if timer expires and score is at least 600 
+  else if (timer==="0m 0s"&& score>=500&& LEVEL==2){   //if timer expires and score is at least 600 
     LEVEL+=1
     alert("You Win Level 2!")
 
   }
 
-  else if (timer==="0m 0s" && score>=700 && LEVEL==3){  //if timer expires and score is at least 700 
+  else if (timer==="0m 0s" && score>=600 && LEVEL==3){  //if timer expires and score is at least 700 
     World.pause();
     alert("Congrats, you win the game!")
     window.location.reload()
 
   }
-  else if ((timer==="0m 1s" && score<400 && LEVEL==1)||(timer==="0m 1s" && score<600 && LEVEL==2)||(timer==="0m 1s" && score<800 && LEVEL==3)){ //if timer expires and score required for each level has not been reached
+  else if ((timer==="0m 1s" && score<400 && LEVEL==1)||(timer==="0m 1s" && score<500 && LEVEL==2)||(timer==="0m 1s" && score<600 && LEVEL==3)){ //if timer expires and score required for each level has not been reached
     World.pause();
     alert("You haven't destroyed enough viruses")
     window.location.reload()
@@ -137,8 +137,6 @@ function render() {
       if(health < 1) {
         LEVEL=1;
         World.pause()
-      //  alert("Game over")
-       // window.location.reload()
        window.location.href = './gameOver.html'; //relative to domain
      
       }
