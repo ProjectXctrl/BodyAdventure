@@ -77,6 +77,20 @@
     height: auto;
     z-index: -100;
 }
+#credit-list {
+    height: 30em;
+    margin-bottom: 1em;
+    background-color: #333;
+    padding:15px;
+}
+#credit-list ul{
+    list-style:none;
+
+}
+#credit-list ul li{
+    padding:3px;
+    
+}
 
  /*styling loading page*/
  .loader {
