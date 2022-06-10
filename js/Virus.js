@@ -2,11 +2,11 @@ var THREE = require('three'),
     ObjLoader = require('./objloader')
 
 var loader = new ObjLoader()
-var rockMtl = new THREE.MeshLambertMaterial({
+var virusMtl = new THREE.MeshLambertMaterial({
   map: THREE.ImageUtils.loadTexture('models/covid.png')
 })
 
-var Virus = function(rockType) {
+var Virus = function(virusType) {
   var mesh = new THREE.Object3D(), self = this
 
   // Speed of motion and rotation
@@ -18,7 +18,7 @@ var Virus = function(rockType) {
   loader.load('models/covid'  + '.obj', function(obj) {  //load blender virus model
     obj.traverse(function(child) {
       if(child instanceof THREE.Mesh) {
-        child.material = rockMtl
+        child.material = virusMtl
         child.castShadow = true
         child.receiveShadow = true
       }

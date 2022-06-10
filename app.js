@@ -3,24 +3,25 @@ var THREE = require('three'),
     ObjLoader = require('./objloader')
 
 var loader = new ObjLoader()
-var rockMtl = new THREE.MeshLambertMaterial({
+var virusMtl = new THREE.MeshLambertMaterial({
   map: THREE.ImageUtils.loadTexture('models/covid.png')
 })
 
-var Virus = function(rockType) {
+var Virus = function(virusType) {
   var mesh = new THREE.Object3D(), self = this
 
   // Speed of motion and rotation
   mesh.velocity = Math.random() * 4 + 2
   mesh.vRotation = new THREE.Vector3(Math.random(), Math.random(), Math.random())
 
-  this.bbox = new THREE.Box3()
+  this.bbox = new THREE.Box3() //collision-detection box
 
-  loader.load('models/covid'  + '.obj', function(obj) {
+  loader.load('models/covid'  + '.obj', function(obj) {  //load blender virus model
     obj.traverse(function(child) {
       if(child instanceof THREE.Mesh) {
-        child.material = rockMtl
+        child.material = virusMtl
         child.castShadow = true
+        child.receiveShadow = true
       }
     })
 
@@ -29,16 +30,16 @@ var Virus = function(rockType) {
     mesh.add(obj)
     mesh.position.set(-50 + Math.random() * 100, -50 + Math.random() * 100, -1500 - Math.random() * 1500)
 
-    self.bbox.setFromObject(obj)
+    self.bbox.setFromObject(obj)  //set size of collision detection box based on virus size
     self.loaded = true
   })
 
-  this.reset = function(z) {
+  this.reset = function(z) {    //reset them back where they come from
     mesh.velocity = Math.random() * 2 + 2
     mesh.position.set(-50 + Math.random() * 100, -50 + Math.random() * 100, z - 1500 - Math.random() * 1500)
   }
 
-  this.update = function(z) {
+  this.update = function(z) {   //update current position
     mesh.position.z += mesh.velocity
     mesh.rotation.x += mesh.vRotation.x * 0.02;
     mesh.rotation.y += mesh.vRotation.y * 0.02;
@@ -51,7 +52,7 @@ var Virus = function(rockType) {
     }
   }
 
-  this.getMesh = function() {
+  this.getMesh = function() {   // to get the finished product (viruses)
     return mesh
   }
 
@@ -61,28 +62,28 @@ var Virus = function(rockType) {
 module.exports = Virus
 
 
-},{"./objloader":4,"three":10}],2:[function(require,module,exports){
+},{"./objloader":4,"three":11}],2:[function(require,module,exports){
 var World = require('./world'),
     THREE = require('three'),
     Tunnel = require('./tunnel'),
     Player = require('./player'),
     Virus = require('./Virus'),
-    Shot = require('./shot')
+    Shot = require('./shot'),
+    Timer = require('./timer')
   
-    var lastTick = 0;
-    const MOVE_UP = 40; // e
-    const MOVE_DOWN = 38; // q
-
     var object;
+
+    //for calulcating next position in movement
     var minY = Number.NEGATIVE_INFINITY;
     var maxY = Number.POSITIVE_INFINITY;
-
+    
+    //flags for direction of movement
     var moveLeft = false;
     var moveRight = false;
     var moveUp = false;
     var moveDown = false;
 
-var NUM_VIRUS = 18//number of virus generated at one time
+var NUM_VIRUS = 10//number of virus generated at one time
 var LEVEL = 1  //level number
 
 //x,y & z positions of shots 
@@ -90,19 +91,17 @@ var px=0
 var py=25
 var pz=100;
 var ammo;
+var shipZPos = -100;
 
 var lvl1flag =true;
 var lvl2flag =true;
 var lvl3flag =true;
 
-
 /////////////////////////////
 function render() {
 
-  var t = performance.now();
-  var delta = t - lastTick;
-  update(delta / 1000);
- 
+
+  update();
   tunnel.update(cam.position.z)
   player.update()
   document.getElementById("level").textContent=LEVEL;
@@ -110,66 +109,72 @@ function render() {
   if(LEVEL==1){
 
     if(lvl1flag){
+      
+     var time2 = new Timer(1,2);
       score=0
-      ammo=40
+      ammo=60
       lvl1flag=false;
     }
-    cam.position.z -= 3
-    document.getElementById("target").textContent=300;
+    cam.position.z -= 4.5
+    document.getElementById("target").textContent=400;
   }
 
   if(LEVEL==2){
 
     if(lvl2flag){
+      var time2 = new Timer(1,2);
       score=0
-      ammo=55
+      ammo=70
       lvl2flag=false;
     }
 
-    cam.position.z -= 5
+    cam.position.z -= 5.5
     document.getElementById("target").textContent=500;
   }
 
   if(LEVEL==3){
 
     if(lvl3flag){
+      var time2 = new Timer(1,2);
       score=0
-      ammo=70
+      ammo=90
       lvl3flag=false
     }
  
-    cam.position.z -= 6
-    document.getElementById("target").textContent=700;
+    cam.position.z -= 6.5
+    document.getElementById("target").textContent=600;
   }
+
+
   if(ammo>0){document.getElementById("ammo").textContent=ammo;}
-  else{document.getElementById("ammo").textContent="No Ammo";}
 
-
+  else{document.getElementById("ammo").textContent="No Ammo";  }
 
   
   var timer = document.getElementById("time").innerHTML;
-  if(timer==="0m 0s" && score>=300 && LEVEL==1 ){ //if timer expires and score is at least 200 
+  if(timer==="0m 0s" && score>=400 && LEVEL==1 ){ //if timer expires and score is at least 400 
     
     LEVEL+=1
     document.getElementById("target").textContent==400;
    alert("You Win Level 1! ")
  
   } 
-  else if (timer==="0m 0s" && score<200 && LEVEL==1){ //if timer expires and score is less than 200
-    World.pause();
-    alert("You haven't destroyed enough viruses")
-    window.location.reload()
 
-  }
-  else if (score>=500&& LEVEL==2){
+  else if (timer==="0m 0s"&& score>=500&& LEVEL==2){   //if timer expires and score is at least 600 
     LEVEL+=1
     alert("You Win Level 2!")
 
   }
 
-  else if (score>=700 && LEVEL==3){
+  else if (timer==="0m 0s" && score>=600 && LEVEL==3){  //if timer expires and score is at least 700 
     World.pause();
     alert("Congrats, you win the game!")
+    window.location.reload()
+
+  }
+  else if ((timer==="0m 1s" && score<400 && LEVEL==1)||(timer==="0m 1s" && score<500 && LEVEL==2)||(timer==="0m 1s" && score<600 && LEVEL==3)){ //if timer expires and score required for each level has not been reached
+    World.pause();
+    alert("You haven't destroyed enough viruses")
     window.location.reload()
 
   }
@@ -197,8 +202,6 @@ function render() {
       if(health < 1) {
         LEVEL=1;
         World.pause()
-      //  alert("Game over")
-       // window.location.reload()
        window.location.href = './gameOver.html'; //relative to domain
      
       }
@@ -208,44 +211,46 @@ function render() {
     for(var j=0; j<shots.length; j++) {
       if(virus[i].bbox.isIntersectionBox(shots[j].bbox)) {  //if shot hits virus
         var audio = new Audio('./song/alien3.wav');
+        audio.play();                                       //play shooting sound
         score += 10
-        document.getElementById("score").textContent = score
-        virus[i].reset(cam.position.z)
-        World.getScene().remove(shots[j].getMesh())
+        document.getElementById("score").textContent = score  //change displayed score
+        virus[i].reset(cam.position.z)                      //reset virus' position
+        World.getScene().remove(shots[j].getMesh())        //remove shots
         shots.splice(j, 1)
         audio.volume = 0.3
-        audio.play();
+        
         break
       }
     }
 
   }
-  lastTick=t;
-}
 
+}
 ////////////////////////////////////////////////////////////////////
 
 var health = 100, score = 0
 
 World.init({ renderCallback: render, clearColor: "#620505"})
+
 var cam = World.getCamera()
 object=cam;
 
-///directionalLight
-const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
-//directionalLight.castShadow = true;
+
+//directional light
+const directionalLight = new THREE.DirectionalLight( 0xffffff, 3);
+directionalLight.position.set(1,0,0)
 World.add(directionalLight )
 
 //point light
-const pointlight1 = new THREE.PointLight(0xffffff, 5, 5);
-pointlight1.castShadow = true;
-pointlight1.position.set(0, -25, -120); //front
-World.add(pointlight1)
+const pointlight = new THREE.PointLight(0xffffff, 0.5, 1000);
+pointlight.castShadow = true;
+pointlight.position.set(0,25, -100); 
 
-/* const pointlight2 = new THREE.PointLight(0xffffff, 5, 100);
-pointlight2.castShadow = true;
-pointlight2.position.set(0, -100, -50); //top
-World.add(pointlight2) */
+//Set up shadow properties for the light
+pointlight.shadow.mapSize.width =1000; 
+pointlight.shadow.mapSize.height = 1000; 
+cam.add(pointlight)
+
 
 var tunnel = new Tunnel()
 World.add(tunnel.getMesh())
@@ -256,12 +261,13 @@ World.add(cam)
 
 var virus = [], shots = []
 
+// to add viruses to the world
 for(var i=0;i<NUM_VIRUS; i++) {
-  virus.push(new Virus(Math.floor(Math.random() * 5) + 1))
+  virus.push(new Virus(Math.floor(Math.random() * 5) + 1))   
   World.add(virus[i].getMesh())
 }
 
-World.getScene().fog = new THREE.FogExp2("#620505", 0.00110)
+World.getScene().fog = new THREE.FogExp2("#620505", 0.00165)
 
 World.start()
 
@@ -271,11 +277,16 @@ window.addEventListener('keyup', function(e) {
       case 32: // if the key is Space, shoot
         ammo--;
         if(ammo>0){
+           //establish sound for shot
           var audio = new Audio('./song/hit.mp3');
           audio.volume = 0.2
           audio.play();
+          
+          //etablish ship position
           var shipPosition = cam.position.clone()
           shipPosition.sub(new THREE.Vector3(px, py, pz))
+
+          //create and shoot the shot
           var shot = new Shot(shipPosition)
           shots.push(shot)
           World.add(shot.getMesh())
@@ -288,26 +299,30 @@ window.addEventListener('keyup', function(e) {
       case 39: /*right*/
       case 68: /*D*/ moveRight = false; break;
 
-      case 83: /*up*/
-      case MOVE_UP: moveUp = false; break;
+      case 83: /*S*/
+      case 40:/*up*/ moveUp = false; break;
   
-      case 87: /*down*/
-      case MOVE_DOWN: moveDown = false; break;
+      case 87: /*W*/
+      case 38: /*down*/ moveDown = false; break;
 
-      case 81: // Q
+      case 88: // X
+      
+      //update starting shot position
         px=0;
         py=10;
         pz=12;
-        player.firstPerson();
+        player.firstPerson(); // for first person camera affect
       break
-
-      case 69: // E
-        px=0
-        py=25
+      
+      case 90: // Z
+      //update starting shot position
+        px=0;
+        py=25;
         pz=100;
-        player.thirdPerson();
+        player.thirdPerson();  // for default first person camera affect
       break
 
+ 
   }
 })
 
@@ -315,12 +330,17 @@ window.addEventListener('keyup', function(e) {
 document.addEventListener("mousedown", function(e) {  //when mouse is clicked, shoot
     ammo--;
     if(ammo>=0){
-      var audio = new Audio('./song/hit.mp3');
+      //establish sound for shot
+      var audio = new Audio('./song/hit.mp3');       
       audio.volume = 0.2
       audio.play();
-      var shipPosition = cam.position.clone()
+
+      //establish ship position
+      var shipPosition = cam.position.clone()        
       shipPosition.sub(new THREE.Vector3(0, 25, 100))
-      var shot = new Shot(shipPosition)
+
+      //create and shoot the shot
+      var shot = new Shot(shipPosition)    
       shots.push(shot)
       World.add(shot.getMesh())
     }
@@ -338,45 +358,78 @@ window.addEventListener('keydown', function(e) {
     case 68: /*D*/ moveRight = true; break;
 
     case 83: /*up*/
-    case MOVE_UP: moveUp = true; break;
+    case 40: moveUp = true; break;
 
     case 87: /*down*/
-    case MOVE_DOWN: moveDown = true; break;
+    case 38: moveDown = true; break;
+
+    
+    case 81: /*Q*/
+    //forward movement
+    if(player.getZPos()>-124){
+
+      shipZPos-=3;
+      player.setZPos(shipZPos);
+
+      //update starting shot position
+      px = -player.getXPos();
+      py = -player.getYPos();
+      pz = -player.getZPos();
+    } 
+    break;
+
+    case 69: /*E*/
+    //backward movement
+    console.log(player.getXPos());
+    console.log(player.getYPos());
+    console.log(player.getZPos());
+
+    if(player.getZPos()<-70){        
+ 
+      shipZPos+=3;
+      player.setZPos(shipZPos);
+      
+      //update starting shot positions
+      px = -player.getXPos();
+      py = -player.getYPos();
+      pz = -player.getZPos() 
+    }
+    break; 
 
 
   }
 });
 
 
-function update(delta) {
- 
+function update() {
 
-    if ((moveLeft || moveRight)  ) {
    
+    if ((moveLeft || moveRight)  ) {    // if there is horizontal movement
+
       const x_contrib =  (Number(moveLeft) - Number(moveRight)) ;
       var nextRightPos = Math.max(minY, Math.min(maxY, (object.position.x - x_contrib)+1));
       var nextLeftPos = Math.max(minY, Math.min(maxY, (object.position.x - x_contrib)-1));
-
-      if((nextLeftPos>-54 && nextRightPos<54)){
-      object.position.x = Math.max(minY, Math.min(maxY, object.position.x - x_contrib));
+        
+      if((nextLeftPos>-54 && nextRightPos<54)){      //if camera is at left and right bounds
+      object.position.x = Math.max(minY, Math.min(maxY, object.position.x - x_contrib));  //update horizontal object position
       }
     
     }
  
-      if (moveUp || moveDown ) {
+      if (moveUp || moveDown ) {    // if there is vertical movement
+
         const y_contrib =  (Number(moveUp) - Number(moveDown)) ;
         var nextUpPos = Math.max(minY, Math.min(maxY, (object.position.y - y_contrib)+1));
         var nextDownPos = Math.max(minY, Math.min((maxY, object.position.y - y_contrib)-1));
 
-        if((nextDownPos>=-20 && nextUpPos<=60)){
-        object.position.y = Math.max(minY, Math.min(maxY, object.position.y - y_contrib));
+        if((nextDownPos>=-20 && nextUpPos<=60)){   //if camera is at top and and bottom bounds
+        object.position.y = Math.max(minY, Math.min(maxY, object.position.y - y_contrib));  //update vertical object position
         }
 
       }
 }
 
-
-},{"./Virus":1,"./player":6,"./shot":7,"./tunnel":8,"./world":9,"three":10}],3:[function(require,module,exports){
+},{"./Virus":1,"./player":6,"./shot":7,"./timer":8,"./tunnel":9,"./world":10,"three":11}],3:[function(require,module,exports){
 /**
  * Loads a Wavefront .mtl file specifying materials
  *
@@ -813,7 +866,7 @@ MTLLoader.nextHighestPowerOfTwo_ = function( x ) {
 
 THREE.EventDispatcher.prototype.apply( MTLLoader.prototype );
 
-},{"three":10}],4:[function(require,module,exports){
+},{"three":11}],4:[function(require,module,exports){
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -1190,7 +1243,7 @@ OBJLoader.prototype = {
 
 module.exports = OBJLoader;
 
-},{"three":10}],5:[function(require,module,exports){
+},{"three":11}],5:[function(require,module,exports){
 /**
  * Loads a Wavefront .obj file with materials
  *
@@ -1561,7 +1614,7 @@ OBJMTLLoader.prototype = {
 
 THREE.EventDispatcher.prototype.apply( OBJMTLLoader.prototype );
 
-},{"./mtlloader":3,"three":10}],6:[function(require,module,exports){
+},{"./mtlloader":3,"three":11}],6:[function(require,module,exports){
 var THREE = require('three'),
     ObjMtlLoader = require('./objmtlloader'),
     loader = new ObjMtlLoader()
@@ -1572,16 +1625,12 @@ var spaceship = null
 var Player = function(parent) {
   this.loaded = false
   var self = this, spaceship = null
-  self.bbox = new THREE.Box3()
+  self.bbox = new THREE.Box3()   //collision detection box
     
-  this.remove = () =>{
-    parent.children.pop()
-  }
-  
+ //camera effects
   this.firstPerson = () =>{
     spaceship.position.set(0, -10,12)
   }
-  
   this.thirdPerson = () =>{
     spaceship.position.set(0, -25, -100)
   }
@@ -1601,7 +1650,7 @@ var Player = function(parent) {
     return spaceship.position.z;
   }
 
-  if(spaceship === null) {
+  if(spaceship === null) {   // to load our spaceship and establish its properties
     loader.load('models/spaceship.obj', 'models/spaceship.mtl', function(mesh) {
       mesh.scale.set(0.2, 0.2, 0.2)
       mesh.rotation.set(0, Math.PI, 0)
@@ -1621,15 +1670,15 @@ var Player = function(parent) {
     self.loaded = true
   }
 
-  this.update = function() {
+  this.update = function() { 
     if(!spaceship) return
-    this.bbox.setFromObject(spaceship)
+    this.bbox.setFromObject(spaceship)  //sets collision detection box size based of spaceship size
   }
 }
 
 module.exports = Player
 
-},{"./objmtlloader":5,"three":10}],7:[function(require,module,exports){
+},{"./objmtlloader":5,"three":11}],7:[function(require,module,exports){
 var THREE = require('three')
 
 //build half a capsule
@@ -1658,6 +1707,7 @@ function createCapsule() {
 }
 
 var Shot = function(initialPos) {
+  //properties of the shots
   this.mesh = createCapsule()
   this.mesh.position.copy(initialPos)
   this.mesh.rotateX(Math.PI/2)
@@ -1669,8 +1719,8 @@ var Shot = function(initialPos) {
     return this.mesh
   }
 
-  this.update = function(z) {
-    this.mesh.position.z -= 20
+  this.update = function(z) {  //updates position of shot 
+    this.mesh.position.z -= 25
     this.bbox.setFromObject(this.mesh)
 
     if(Math.abs(this.mesh.position.z - z) > 1000) {
@@ -1686,19 +1736,71 @@ var Shot = function(initialPos) {
 
 module.exports = Shot
 
-},{"three":10}],8:[function(require,module,exports){
+},{"three":11}],8:[function(require,module,exports){
+var Timer = function(minutes,seconds) {
+
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "August", "Sep", "Oct", "Nov", "Dec"];
+const d = new Date();
+
+let month = months[d.getMonth()];
+let day = d.getDate();
+let year = d.getFullYear();
+
+let hour= d.getHours();
+var minute= d.getMinutes()+minutes;
+var second= d.getSeconds()+seconds;
+
+let xMinutesLater=""+month+" "+day+", "+year+" "+hour+":"+minute+":"+second;    //sets a date x minutes later than now
+
+
+// Set the date we're counting down to
+var countDownDate = new Date(xMinutesLater).getTime();
+
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+  // Get today's date and time
+  var now = new Date().getTime();
+    
+  // Find the distance between now and the count down date
+  var distance = countDownDate - now;
+    
+  // Time calculations for minutes and seconds
+ 
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+  // Output the result in an element with id="time"
+  document.getElementById("time").innerHTML = 
+  minutes + "m " + seconds + "s";
+    
+  // If the count down is over, write some text 
+  if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("time").innerHTML = "loading";
+  }
+}, 1000);
+
+}
+module.exports = Timer
+
+},{}],9:[function(require,module,exports){
 var THREE = require('three')
 
 var Tunnel = function() {
   var tunnel = new THREE.Object3D(), meshes = []
 
-  meshes.push(new THREE.Mesh(
+  meshes.push(new THREE.Mesh(   //setting up cylinder
     new THREE.CylinderGeometry(100, 100, 5000, 24, 24, true),
-    new THREE.MeshBasicMaterial({
-      map: THREE.ImageUtils.loadTexture('images/back4.jpg', null, function(tex) {
+    
+    new THREE.MeshBasicMaterial({     //setting up the material and texture
+      color:"white",
+       map: THREE.ImageUtils.loadTexture('images/back4.jpg', null, function(tex) {
         tex.wrapS = tex.wrapT = THREE.RepeatWrapping
         tex.repeat.set(5, 10)
-        tex.needsUpdate = true
+        tex.needsUpdate = true 
       }),
       side: THREE.BackSide
     })
@@ -1707,15 +1809,16 @@ var Tunnel = function() {
   // Adding the second mesh as a clone of the first mesh
   meshes.push(meshes[0].clone())
   meshes[1].position.z = -5000
-
+  meshes[0].receiveShadow=true;
+  meshes[1].receiveShadow=true;
   tunnel.add(meshes[0])
   tunnel.add(meshes[1])
 
-  this.getMesh = function() {
+  this.getMesh = function() {     //gets the finished tunnel
     return tunnel
   }
 
-  this.update = function(z) {
+  this.update = function(z) {    //alternating positions of each tunnel one in front of the other
     for(var i=0; i<2; i++) {
       if(z < meshes[i].position.z - 2500) {
         meshes[i].position.z -= 10000
@@ -1729,7 +1832,7 @@ var Tunnel = function() {
 
 module.exports = Tunnel
 
-},{"three":10}],9:[function(require,module,exports){
+},{"three":11}],10:[function(require,module,exports){
 var THREE = require('three');
 
 var World = (function() {
@@ -1739,7 +1842,7 @@ var World = (function() {
 
   var paused = false;
 
-  function render() {
+  function render() {    // in oreder to render the scene
     if (paused) return;
     if(frameCallback) {
       if(frameCallback() === false) {
@@ -1751,7 +1854,7 @@ var World = (function() {
     requestAnimationFrame(render);
   }
 
-  function onResize() {
+  function onResize() {  //size of the window and camera aspect 
     var width  = container ? container.clientWidth  : window.innerWidth,
         height = container ? container.clientHeight : window.innerHeight;
 
@@ -1762,7 +1865,7 @@ var World = (function() {
 
   }
 
-  // Exports
+
 
   self.init = function(options) {
     if(!options) options = {};
@@ -1781,7 +1884,8 @@ var World = (function() {
 
     var ambient = new THREE.AmbientLight(options.ambientLightColor === undefined ? 0xffffff : options.ambientLightColor);
     scene.add(ambient);
-
+	  
+     //renderer properties
     renderer = new THREE.WebGLRenderer(options.rendererOpts);
     renderer.setSize(width, height);
     renderer.shadowMap.enabled = true;
@@ -1794,16 +1898,20 @@ var World = (function() {
     window.addEventListener( 'resize', onResize, false );
   }
 
-  self.add = function(object) {
+	
+// to add and remove objects from the world
+  self.add = function(object) {   
     scene.add(object);
   }
-
   self.remove = function(object) {
     scene.remove(object);
   }
 
   self.recalculateSize = onResize;
 
+	
+// functions used for the state of the world
+	
   self.start = function() {
     render();
   }
@@ -1830,7 +1938,7 @@ var World = (function() {
 
 module.exports = World;
 
-},{"three":10}],10:[function(require,module,exports){
+},{"three":11}],11:[function(require,module,exports){
 var self = self || {};// File:src/Three.js
 
 /**
